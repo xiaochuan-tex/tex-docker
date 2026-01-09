@@ -10,7 +10,7 @@ jobs:
   compile-projects:
     runs-on: ubuntu-latest
     container:
-      image: texlive/texlive:2025-full
+      image: texlive/texlive:latest
     strategy:
       matrix:
         project: 
