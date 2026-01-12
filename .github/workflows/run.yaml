@@ -82,22 +82,28 @@ jobs:
 
       - name: Install TeX Live 2025 Full from ISO
         run: |
-          # 下载TeX Live 2025 ISO文件（约4.5GB）
+          # 创建临时工作目录
+          WORK_DIR=$(mktemp -d)
+          cd "$WORK_DIR"
+          echo "工作目录: $WORK_DIR"
+          
+          # 下载TeX Live 2025 ISO文件
           echo "开始下载TeX Live 2025 ISO..."
           curl -L -o texlive2025.iso https://mirrors.tuna.tsinghua.edu.cn/CTAN/systems/texlive/Images/texlive2025.iso
           
           # 创建挂载点
-          mkdir -p /tmp/texlive2025
+          MOUNT_POINT=$(mktemp -d)
+          echo "挂载点: $MOUNT_POINT"
           
           # 挂载ISO
           echo "挂载ISO文件..."
-          hdiutil attach texlive2025.iso -mountpoint /tmp/texlive2025 -nobrowse -readonly
+          hdiutil attach texlive2025.iso -mountpoint "$MOUNT_POINT" -nobrowse -readonly
           
           # 进入挂载目录
-          cd /tmp/texlive2025
+          cd "$MOUNT_POINT"
           
-          # 创建全量安装配置文件
-          cat > full_install.profile << 'EOF'
+          # 在临时目录创建全量安装配置文件
+          cat > "$WORK_DIR/full_install.profile" << 'EOF'
           # TeX Live 2025 全量安装配置
           selected_scheme scheme-full
           TEXDIR /usr/local/texlive/2025
@@ -113,20 +119,21 @@ jobs:
           
           # 执行全量安装
           echo "开始安装TeX Live 2025（全量版）..."
-          sudo ./install-tl -profile=full_install.profile -no-interaction
+          sudo ./install-tl -profile="$WORK_DIR/full_install.profile" -no-interaction
           
           # 卸载ISO
-          hdiutil detach /tmp/texlive2025
+          cd /
+          hdiutil detach "$MOUNT_POINT"
           
-          # 清理ISO文件释放空间
-          rm -f texlive2025.iso
+          # 清理临时目录
+          rm -rf "$WORK_DIR" "$MOUNT_POINT"
           
           # 添加TeX Live到PATH
           echo "/usr/local/texlive/2025/bin/universal-darwin" >> $GITHUB_PATH
           
           # 验证安装
           echo "安装完成，验证版本："
-          /usr/local/texlive/2025/bin/universal-darwin/pdflatex --version
+          /usr/local/texlive/2025/bin/universal-darwin/pdflatex --version | head -3
 
       - name: Compile LaTeX
         run: |
