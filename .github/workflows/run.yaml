@@ -80,15 +80,48 @@ jobs:
           path: /usr/local/texlive/2025
           key: ${{ runner.os }}-texlive2025
 
-      - name: install texlive
-        if: steps.cache-software.outputs.cache-hit != 'true'
+       - name: Full TeX Live installation via network
         run: |
-          cd /tmp
-          curl -O https://mirrors.tuna.tsinghua.edu.cn/CTAN/systems/texlive/Images/texlive2025.iso
-          sudo mkdir -p /mnt/texlive2025
-          sudo mount -o loop,ro /tmp/texlive2025.iso /mnt/texlive2025
-          cd /mnt/texlive2025
-          sudo ./install-tl --scheme=full --no-interaction
+          # 下载安装脚本
+          curl -L -o install-tl.tar.gz https://mirrors.tuna.tsinghua.edu.cn/CTAN/systems/texlive/tlnet/install-tl-unx.tar.gz
+          tar -xzf install-tl.tar.gz
+          cd install-tl-*
+          
+          # 创建全量安装配置文件
+          cat > texlive_full.profile << 'EOF'
+          # TeX Live 2025 全量安装配置
+          selected_scheme scheme-full
+          TEXDIR /usr/local/texlive/2025
+          TEXMFCONFIG ~/.texlive2025/texmf-config
+          TEXMFHOME ~/texmf
+          TEXMFLOCAL /usr/local/texlive/texmf-local
+          TEXMFSYSCONFIG /usr/local/texlive/2025/texmf-config
+          TEXMFSYSVAR /usr/local/texlive/2025/texmf-var
+          TEXMFVAR ~/.texlive2025/texmf-var
+          option_doc 1
+          option_src 1
+          EOF
+          
+          # 使用清华镜像进行全量安装
+          echo "开始全量安装TeX Live 2025..."
+          sudo ./install-tl \
+            -profile=texlive_full.profile \
+            -repository https://mirrors.tuna.tsinghua.edu.cn/CTAN/systems/texlive/tlnet/ \
+            -no-interaction \
+            -persistent-downloads
+          
+          # 添加环境变量
+          TEXLIVE_BIN="/usr/local/texlive/2025/bin/universal-darwin"
+          echo "export PATH=\"$TEXLIVE_BIN:\$PATH\"" >> ~/.bashrc
+          echo "export MANPATH=\"/usr/local/texlive/2025/texmf-dist/doc/man:\$MANPATH\"" >> ~/.bashrc
+          echo "export INFOPATH=\"/usr/local/texlive/2025/texmf-dist/doc/info:\$INFOPATH\"" >> ~/.bashrc
+          
+          echo "$TEXLIVE_BIN" >> $GITHUB_PATH
+          
+          # 验证安装
+          source ~/.bashrc
+          which pdflatex
+          pdflatex --version
 
       - name: Compile LaTeX
         run: |
