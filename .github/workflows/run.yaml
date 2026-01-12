@@ -80,15 +80,24 @@ jobs:
           path: /usr/local/texlive/2025
           key: ${{ runner.os }}-texlive2025
 
-      - name: Full TeX Live installation via network
+      - name: Install TeX Live 2025 Full from ISO
         run: |
-          # 下载安装脚本
-          curl -L -o install-tl.tar.gz https://mirrors.tuna.tsinghua.edu.cn/CTAN/systems/texlive/tlnet/install-tl-unx.tar.gz
-          tar -xzf install-tl.tar.gz
-          cd install-tl-*
+          # 下载TeX Live 2025 ISO文件（约4.5GB）
+          echo "开始下载TeX Live 2025 ISO..."
+          curl -L -o texlive2025.iso https://mirrors.tuna.tsinghua.edu.cn/CTAN/systems/texlive/Images/texlive2025.iso
+          
+          # 创建挂载点
+          mkdir -p /tmp/texlive2025
+          
+          # 挂载ISO
+          echo "挂载ISO文件..."
+          hdiutil attach texlive2025.iso -mountpoint /tmp/texlive2025 -nobrowse -readonly
+          
+          # 进入挂载目录
+          cd /tmp/texlive2025
           
           # 创建全量安装配置文件
-          cat > texlive_full.profile << 'EOF'
+          cat > full_install.profile << 'EOF'
           # TeX Live 2025 全量安装配置
           selected_scheme scheme-full
           TEXDIR /usr/local/texlive/2025
@@ -102,26 +111,22 @@ jobs:
           option_src 1
           EOF
           
-          # 使用清华镜像进行全量安装
-          echo "开始全量安装TeX Live 2025..."
-          sudo ./install-tl \
-            -profile=texlive_full.profile \
-            -repository https://mirrors.tuna.tsinghua.edu.cn/CTAN/systems/texlive/tlnet/ \
-            -no-interaction \
-            -persistent-downloads
+          # 执行全量安装
+          echo "开始安装TeX Live 2025（全量版）..."
+          sudo ./install-tl -profile=full_install.profile -no-interaction
           
-          # 添加环境变量
-          TEXLIVE_BIN="/usr/local/texlive/2025/bin/universal-darwin"
-          echo "export PATH=\"$TEXLIVE_BIN:\$PATH\"" >> ~/.bashrc
-          echo "export MANPATH=\"/usr/local/texlive/2025/texmf-dist/doc/man:\$MANPATH\"" >> ~/.bashrc
-          echo "export INFOPATH=\"/usr/local/texlive/2025/texmf-dist/doc/info:\$INFOPATH\"" >> ~/.bashrc
+          # 卸载ISO
+          hdiutil detach /tmp/texlive2025
           
-          echo "$TEXLIVE_BIN" >> $GITHUB_PATH
+          # 清理ISO文件释放空间
+          rm -f texlive2025.iso
+          
+          # 添加TeX Live到PATH
+          echo "/usr/local/texlive/2025/bin/universal-darwin" >> $GITHUB_PATH
           
           # 验证安装
-          source ~/.bashrc
-          which pdflatex
-          pdflatex --version
+          echo "安装完成，验证版本："
+          /usr/local/texlive/2025/bin/universal-darwin/pdflatex --version
 
       - name: Compile LaTeX
         run: |
