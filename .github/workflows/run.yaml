@@ -80,7 +80,7 @@ jobs:
           path: /usr/local/texlive/2025
           key: ${{ runner.os }}-texlive2025
 
-       - name: Full TeX Live installation via network
+      - name: Full TeX Live installation via network
         run: |
           # 下载安装脚本
           curl -L -o install-tl.tar.gz https://mirrors.tuna.tsinghua.edu.cn/CTAN/systems/texlive/tlnet/install-tl-unx.tar.gz
