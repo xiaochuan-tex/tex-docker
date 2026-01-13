@@ -81,6 +81,7 @@ jobs:
           key: ${{ runner.os }}-texlive2025
 
       - name: Install TeX Live 2025 Full from ISO
+        if: steps.cache-software.outputs.cache-hit != 'true'
         run: |
           # 创建临时工作目录
           WORK_DIR=$(mktemp -d)
