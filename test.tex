@@ -1,0 +1,31 @@
+% main.tex
+\documentclass{article}
+\usepackage{ifplatform}
+\usepackage{fontspec}
+
+\ifwindows
+    \usepackage[fontset=windows]{ctex}
+\fi
+\ifmacosx
+    \usepackage[fontset=mac]{ctex}
+    % 或者手动设置 macOS 字体
+    % \setCJKmainfont{Kaiti SC}
+\fi
+\iflinux
+    \usepackage[fontset=ubuntu]{ctex}
+\fi
+
+% 如果 ifplatform 检测失败，可以手动设置
+% \newcommand{\setupfonts}{%
+%     \ifdefined\macosxname
+%         \usepackage[fontset=mac]{ctex}
+%     \else\ifdefined\linuxdistname
+%         \usepackage[fontset=ubuntu]{ctex}
+%     \else
+%         \usepackage[fontset=windows]{ctex}
+%     \fi\fi
+% }
+
+\begin{document}
+跨平台文档内容
+\end{document}

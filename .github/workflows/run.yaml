@@ -152,22 +152,23 @@ jobs:
           PROJECT_NAME="${{ matrix.project.name }}"
           IS_SUB="${{ matrix.project.sub || 'false' }}"
           
-          cd "./$PROJECT_NAME"
+          # cd "./$PROJECT_NAME"
           
-          # 尝试编译
-          if [ -f "main.tex" ]; then
-            latexmk -xelatex -jobname="$PROJECT_NAME" main.tex
-            cp ./*.pdf ../
-          fi
-          if [ -f "pad.tex" ]; then
-            latexmk -xelatex -jobname="${PROJECT_NAME}_pad" pad.tex
-            cp ./*.pdf ../
-          fi
-          if [ -f "compile.py" ]; then
-            python ./compile.py --sub="$IS_SUB"
-            echo "复制所有 PDF 文件到上级目录..."
-            find . -name "*.pdf" -type f -exec cp {} ../ \;
-          fi
+          # # 尝试编译
+          # if [ -f "main.tex" ]; then
+          #   latexmk -xelatex -jobname="$PROJECT_NAME" main.tex
+          #   cp ./*.pdf ../
+          # fi
+          # if [ -f "pad.tex" ]; then
+          #   latexmk -xelatex -jobname="${PROJECT_NAME}_pad" pad.tex
+          #   cp ./*.pdf ../
+          # fi
+          # if [ -f "compile.py" ]; then
+          #   python ./compile.py --sub="$IS_SUB"
+          #   echo "复制所有 PDF 文件到上级目录..."
+          #   find . -name "*.pdf" -type f -exec cp {} ../ \;
+          # fi
+        latexmk -xelatex -jobname="test" test.tex
 
       - name: Upload PDF
         uses: actions/upload-artifact@v4
