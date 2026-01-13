@@ -144,6 +144,14 @@ def compile_sub_pad(entry, name, task_id):
 \let\oldvfill\vfill  % 保存原来的\vfill命令
 \renewcommand{\vfill}{\newpage}
 
+\graphicspath{
+  {./}        % 当前目录
+  {../}       % 上一层
+  {../../}    % 上两层
+  {../../../} % 上三层
+  {../../../../} % 上四层（通常足够）
+}
+
 \title{{title}}
 \author{xiaochuan}
 \date{}
@@ -223,6 +231,8 @@ def compile_sub_exam(entry, name, task_id):
 
 \usepackage{setspace}
 
+\UseTblrLibrary{diagbox}
+
 \examsetup{
   page/size=a4paper,
   paren/show-paren=true,
@@ -255,6 +265,14 @@ def compile_sub_exam(entry, name, task_id):
           minimum height=2cm]   % 固定高度
     {试卷条形码};           % 固定内容
   \end{tikzpicture}
+}
+
+\graphicspath{
+  {./}        % 当前目录
+  {../}       % 上一层
+  {../../}    % 上两层
+  {../../../} % 上三层
+  {../../../../} % 上四层（通常足够）
 }
 
 \everymath{\displaystyle}
