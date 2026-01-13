@@ -77,6 +77,8 @@ jobs:
         run: |
           sudo mkdir -p /usr/local/texlive/2025
           # sudo chown -R $USER:$USER /usr/local/texlive/2025
+          sudo mkdir -p /usr/local/texlive/2025/texmf-var
+          sudo chmod 755 /usr/local/texlive/2025/texmf-var
           sudo chmod -R 755 /usr/local/texlive/2025
 
       - name: Cache downloaded file
