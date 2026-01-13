@@ -141,11 +141,11 @@ jobs:
           # 验证安装
           echo "安装完成，验证版本："
           /usr/local/texlive/2025/bin/universal-darwin/pdflatex --version | head -3
-      - name: install font
-        run: |
-          brew install --cask font-noto-serif-cjk
-          brew install --cask font-ar-pl-ukai  # AR PL 楷体繁体
-          brew install --cask font-ar-pl-uming # AR PL 明体
+      # - name: install font
+      #   run: |
+      #     brew install --cask font-noto-serif-cjk
+      #     brew install --cask font-ar-pl-ukai  # AR PL 楷体繁体
+      #     brew install --cask font-ar-pl-uming # AR PL 明体
       - name: Compile LaTeX
         run: |
           export PATH=$PATH:/usr/local/texlive/2025/bin/universal-darwin
