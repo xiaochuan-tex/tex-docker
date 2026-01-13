@@ -63,7 +63,7 @@ def compile_sub_pad(entry, name, task_id):
     # 生成LaTeX模板内容（保持不变）
     template_tex = r'''\documentclass[oneside]{book}
 
-\usepackage[fontset=ubuntu,heading=true,zihao=-4]{ctex}
+\usepackage[heading=true,zihao=-4]{ctex}
 \usepackage[landscape,
     width = 250mm,
     height=178mm,
