@@ -146,7 +146,7 @@ jobs:
           brew install --cask font-noto-serif-cjk
       - name: Compile LaTeX
         run: |
-          export PATH=$PATH:/usr/local/texlive/2025/bin/x86_64-linux
+          export PATH=$PATH:/usr/local/texlive/2025/bin/universal-darwin
           PROJECT_NAME="${{ matrix.project.name }}"
           IS_SUB="${{ matrix.project.sub || 'false' }}"
           
