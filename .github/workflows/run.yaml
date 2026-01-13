@@ -141,29 +141,31 @@ jobs:
           # 验证安装
           echo "安装完成，验证版本："
           /usr/local/texlive/2025/bin/universal-darwin/pdflatex --version | head -3
-
-      # - name: Compile LaTeX
-      #   run: |
-      #     export PATH=$PATH:/usr/local/texlive/2025/bin/x86_64-linux
-      #     PROJECT_NAME="${{ matrix.project.name }}"
-      #     IS_SUB="${{ matrix.project.sub || 'false' }}"
+      - name: install font
+        run: |
+          brew install --cask font-noto-serif-cjk
+      - name: Compile LaTeX
+        run: |
+          export PATH=$PATH:/usr/local/texlive/2025/bin/x86_64-linux
+          PROJECT_NAME="${{ matrix.project.name }}"
+          IS_SUB="${{ matrix.project.sub || 'false' }}"
           
-      #     cd "./$PROJECT_NAME"
+          cd "./$PROJECT_NAME"
           
-      #     # 尝试编译
-      #     if [ -f "main.tex" ]; then
-      #       latexmk -xelatex -jobname="$PROJECT_NAME" main.tex
-      #       cp ./*.pdf ../
-      #     fi
-      #     if [ -f "pad.tex" ]; then
-      #       latexmk -xelatex -jobname="${PROJECT_NAME}_pad" pad.tex
-      #       cp ./*.pdf ../
-      #     fi
-      #     if [ -f "compile.py" ]; then
-      #       python ./compile.py --sub="$IS_SUB"
-      #       echo "复制所有 PDF 文件到上级目录..."
-      #       find . -name "*.pdf" -type f -exec cp {} ../ \;
-      #     fi
+          # 尝试编译
+          if [ -f "main.tex" ]; then
+            latexmk -xelatex -jobname="$PROJECT_NAME" main.tex
+            cp ./*.pdf ../
+          fi
+          if [ -f "pad.tex" ]; then
+            latexmk -xelatex -jobname="${PROJECT_NAME}_pad" pad.tex
+            cp ./*.pdf ../
+          fi
+          if [ -f "compile.py" ]; then
+            python ./compile.py --sub="$IS_SUB"
+            echo "复制所有 PDF 文件到上级目录..."
+            find . -name "*.pdf" -type f -exec cp {} ../ \;
+          fi
 
       - name: Upload PDF
         uses: actions/upload-artifact@v4
